@@ -1,49 +1,64 @@
 <div class="container mt-3">
     <h2> User Settings</h2>
-    <form>
+    <form #form="ngForm" (ngSubmit)="onSubmit(form)">
+
         <div class="form-group">
             <label for="name">Name</label>
-            <input id="name" name="name" class="form-control" />
+            <input id="name" name="name" class="form-control" [(ngModel)]='userSettings.name' pattern="B.*"
+                #test="ngModel" [class.field-error]="form.submitted && test.untouched" (blur)="onBlur(test)" />
+            <div [hidden]="!form.submitted || test.valid" class="alert alert-danger">Error</div>
         </div>
+
+        <div class="form-group mt-3">
+            <input type="text" placeholder="Pick Date" class="form-control" bsDaterangepicker>
+        </div>
+
         <div class="form-check mt-3">
-            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-            <label class="form-check-label" for="flexCheckDefault">
+            <input class="form-check-input" name="email" type="checkbox" value="" id="email"
+                [(ngModel)]='userSettings.emailOffers'>
+            <label class="form-check-label" for="email">
                 Email Special Offers
             </label>
         </div>
+
         <p class="mt-3">User Interface Style</p>
-        <div class="form-group">
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="InterfaceStyle" id="lightInterface" checked>
-                <label class="form-check-label" for="lightInterface">
-                    Light
-                </label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="InterfaceStyle" id="mediumInterface">
-                <label class="form-check-label" for="mediumInterface">
-                    Medium
-                </label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="radio" name="InterfaceStyle" id="darkInterface">
-                <label class="form-check-label" for="darkInterface">
-                    Dark
-                </label>
-            </div>
+        <div class="btn-group">
+            <label class="btn btn-primary" name="InterfaceStyle" [(ngModel)]='userSettings.interfaceStyle'
+                btnRadio="Left" tabindex="0" role="button">Left</label>
+            <label class="btn btn-primary" name="InterfaceStyle" [(ngModel)]='userSettings.interfaceStyle'
+                btnRadio="Middle" tabindex="1" role="button">Middle</label>
+            <label class="btn btn-primary" name="InterfaceStyle" [(ngModel)]='userSettings.interfaceStyle'
+                btnRadio="Right" tabindex="2" role="button">Right</label>
         </div>
+
         <div class="form-group mt-3">
             <label for="subscriptionType">Subscription Type</label>
-            <select class="form-control" id="subscriptionType">
-                <option value="">Monthly</option>
-                <option value="">Annual</option>
-                <option value="">Lifetime</option>
+            <select name="subscriptionType" class="form-control" id="subscriptionType"
+                [(ngModel)]='userSettings.subscriptionType'>
+                <option *ngFor="let type of subscriptionTypes | async">
+                    {{type}}
+                </option>
             </select>
         </div>
+
         <div class="form-group mt-3">
             <label for="notes">Notes</label>
-            <textarea id="notes" name="notes" class="form-control" rows="3"></textarea>
+            <textarea id="notes" name="notes" class="form-control" rows="3" [(ngModel)]='userSettings.notes'></textarea>
         </div>
-        <button class="btn btn-primary mt-3">Send</button>
+
+        <div [hidden]="!postError" class="alert alert-danger mt-3">
+            {{postErrorMessage}}
+        </div>
+
+        <div class="form-group mt-3">
+            <rating [(ngModel)]="rate" name="rate" id="rate" [max]="max" [readonly]="isReadonly" [titles]="['one','two','three']"></rating>
+            <div class="card">
+                <pre class="card-block card-header" style="margin:15px 0;">Rate: <b>{{rate}}</b> </pre>
+            </div>
+        </div>
+
+        
+
+        <button type="submit" class="btn btn-primary mt-3">Send</button>
     </form>
 </div>
